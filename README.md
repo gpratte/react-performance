@@ -1,3 +1,14 @@
+
+## step 01 add bootstrap
+Added the react-bootstrap dependency
+* _npm install --save react-bootstrap bootstrap_
+
+Imported the bootstrap css
+
+    import 'bootstrap/dist/css/bootstrap.min.css';
+
+Coded a simple bootstrap Container in the App component.
+
 ## step 00 create development environment
 To get started did the following.
 
