@@ -1,3 +1,15 @@
+## step 03 render state
+Parent component that either
+* has state
+* uses custom hook
+* is a context provider
+with children components and a modal dialog.
+
+The children are duplicated using React.memo.
+
+Which children rerender when the modal dialog is dismissed?
+
+Look the the react devtools flamegraph to see why a child rerendered.
 
 ## step 02 react router
 Added the react routing dependency.
