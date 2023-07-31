@@ -1,4 +1,8 @@
 
+## step 02 react router
+Added the react routing dependency.
+* _npm i --save react-router-dom_
+
 ## step 01 add bootstrap
 Added the react-bootstrap dependency
 * _npm install --save react-bootstrap bootstrap_
