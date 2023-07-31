@@ -3,6 +3,11 @@ import {Button, Modal} from "react-bootstrap";
 function Mymodal(props) {
 
   const handleClose = () => props.setShowModel(false);
+  const handleSave = () => {
+    const now = Date.now().valueOf();
+    props.setName(now);
+    props.setShowModel(false);
+  }
 
   return (
     <Modal show={props.showModel} onHide={handleClose}>
@@ -13,6 +18,9 @@ function Mymodal(props) {
       <Modal.Footer>
         <Button variant="secondary" onClick={handleClose}>
           Close
+        </Button>
+        <Button variant="primary" onClick={handleSave}>
+          Save Changes
         </Button>
       </Modal.Footer>
     </Modal>

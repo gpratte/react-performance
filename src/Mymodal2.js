@@ -1,7 +1,7 @@
 import {Button, Modal} from "react-bootstrap";
 import {useState} from "react";
 
-function Mymodal2(props) {
+function Mymodal2() {
 
   const [showModel, setShowModel] = useState(true);
   const handleClose = () => setShowModel(false);
@@ -15,6 +15,9 @@ function Mymodal2(props) {
       <Modal.Footer>
         <Button variant="secondary" onClick={handleClose}>
           Close
+        </Button>
+        <Button variant="primary" onClick={handleClose}>
+          Save Changes
         </Button>
       </Modal.Footer>
     </Modal>
