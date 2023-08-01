@@ -9,7 +9,7 @@ Selecting the name of a player brings up a modal dialog to edit the player
 
 ![modal dialog to edit a player](/img/expanded-player.png)
 
-Cancelling the dialog does not change any values for the player. 
+Closing the dialog does not change any values for the player. 
 
 The question I wanted to answer is: why is it that each react component in the list of players rerenders?
 
@@ -31,11 +31,11 @@ So it is as simple as running
 * _npm start_
 
 ## Has State
-Clicking on the *Has State* button brings up a screen with a modal dialog.
+Clicking on the *Has State* button brings up a screen with the child components timestamped and overlaid by a modal dialog.
 
 ![react Has State list of components overlaid by a modal dialog](/img/Has-State-modal.png)
 
-Clicking the *Cancel* button results it the dialog being dismissed and the parent component (ParentHasState) being rendered.
+Clicking the *Close* button results it the dialog being dismissed and the parent component (ParentHasState) being rendered.
 Note that the timestamps change on the children components that rerender
 
 ![react Has State list of components after dismissing the modal dialog](/img/Has-State-no-modal.png)
@@ -96,6 +96,41 @@ The comments tell all
 The [memo](https://react.dev/reference/react/memo) description says 
 
 > lets you skip re-rendering a component when its props are unchanged.
+
+## Has Custom Hook
+Clicking the *Has Custom Hook* button renders the ParentHasCustomHook component. The state is in the useCustomHook.js file
+```
+export default function useCustomHook() {
+  const [showModel, setShowModel] = useState(true);
+  const [name, setName] = useState('Initial Name');
+  const logTime = (from) => console.log('In logTime, from ' + from + ' ' + Date.now());
+  const logTime2 = useCallback(
+    (from) => {
+      console.log('In LogTime2, from ' + from + ' ' + Date.now())    },
+    [],
+  );
+  return {
+    showModel,
+    setShowModel,
+    name,
+    setName,
+    logTime,
+    logTime2
+  }
+}
+```
+and the ParentHasCustomHook.js uses that custom hook
+```
+  const {
+    showModel,
+    setShowModel,
+    name,
+    setName,
+    logTime,
+    logTime2
+  } = useCustomHook();
+```
+The result of using and custom hook is the same as Has State section above.
 
 # Steps
 ## step 04 flesh out readme
