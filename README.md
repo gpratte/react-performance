@@ -14,10 +14,17 @@ Closing the dialog does not change any values for the player.
 The question I wanted to answer is: why is it that each react component in the list of players rerenders?
 
 ## Ways to see if a component renders
-I started tracking if a component renders by adding *console.log('...')* statements in the rendering of the react component. 
-That got quickly became tedious. I then installed the React DevTools to use the profilier.
+1. use *console.log('...')* statements when rendering
+2. make the screen change (I used timestamps) when rendering
+3. React DevTools profilier
+
+The first two worked but because I could change the code. 
+They would became tedious in a big project and are not an option for code that I cannot change. 
+The third option works very well.
 
 [Introducing the React Profiler](https://legacy.reactjs.org/blog/2018/09/10/introducing-the-react-profiler.html)
+
+That being said the next few sections explain the code and make use of 2. 
 
 ## Running this project
 Download this project to you local computers.
