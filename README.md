@@ -3,11 +3,11 @@
 ## The Motivation
 I was working on the react UI for tracking a poker game. The screen shows a list of players
 
-![vertical list of players in a poker game](img/list-of-players.png)
+![vertical list of players in a poker game](/img/list-of-players.png)
 
 Selecting the name of a player brings up a modal dialog to edit the player
 
-![modal dialog to edit a player](img/expanded-player.png)
+![modal dialog to edit a player](/img/expanded-player.png)
 
 Cancelling the dialog does not change any values for the player. 
 
