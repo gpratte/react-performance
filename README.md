@@ -1,3 +1,28 @@
+# React Performance
+
+## The Motivation
+I was working on the react UI for tracking a poker game. The screen shows a list of players
+
+![vertical list of players in a poker game](img/list-of-players.png)
+
+Selecting the name of a player brings up a modal dialog to edit the player
+
+![modal dialog to edit a player](img/expanded-player.png)
+
+Cancelling the dialog does not change any values for the player. 
+
+The question I wanted to answer is: why is it that each react component in the list of players rerenders?
+
+## Ways to see if a component renders
+I started tracking if a component renders by adding *console.log('...')* statements in the rendering of the react component. 
+That got quickly became tedious. I then installed the React DevTools to use the profilier.
+
+[Introducing the React Profiler](https://legacy.reactjs.org/blog/2018/09/10/introducing-the-react-profiler.html)
+
+# Steps
+## step 04 flesh out readme
+Fleshed out all of the readme content about these list of steps
+
 ## step 03 render state
 Parent component that either
 * has state
