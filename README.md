@@ -130,7 +130,32 @@ and the ParentHasCustomHook.js uses that custom hook
     logTime2
   } = useCustomHook();
 ```
-The result of using and custom hook is the same as Has State section above.
+The result of using and custom hook is the same as [Has State](https://github.com/gpratte/react-performance/tree/step-04-flesh-out-readme#has-state) section above.
+
+## Is Context Provider
+Clicking the *Is Context Provider* button renders the ParentIsContextProvider component.
+This component is the context provider for the _name_. The code follows. Pay attention to the comments
+```
+  const [showModel, setShowModel] = useState(true);
+  const [name, setName] = useState('Initial Name ' + getTime());
+  return (
+    <ParentContext.Provider value={{name}}>
+      {console.log('rendering ParentIsContextProvider')}
+      <h1>Is Context Provider</h1>
+      {/* No memo so it always render when this parent renders*/}
+      <Childnamefromprovidernomemo/>
+      {/* Will rerender because of the useContext hook even though is uses memo
+          https://legacy.reactjs.org/docs/hooks-reference.html#usecontext */}
+      <Childnamefromproviderwithmemo/>
+      <Mymodal showModel={showModel} setShowModel={setShowModel} setName={setName}/>
+    </ParentContext.Provider>
+  );
+```
+Since the state is in the context and not in props the memo does no good. 
+> When the nearest <MyContext.Provider> above the component updates, this Hook will trigger a rerender with the latest context value passed to that MyContext provider. Even if an ancestor uses React.memo or shouldComponentUpdate, a rerender will still happen starting at the component itself using useContext
+
+Clicking on the *Is Context Provider* button and then dismissing the modal dialog will show that both 
+children rerender.
 
 # Steps
 ## step 04 flesh out readme
