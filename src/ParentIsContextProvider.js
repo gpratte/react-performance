@@ -11,7 +11,6 @@ export default function ParentIsContextProvider() {
 
   const [showModel, setShowModel] = useState(true);
   const [name, setName] = useState('Initial Name ' + getTime());
-
   return (
     <ParentContext.Provider value={{name}}>
       {console.log('rendering ParentIsContextProvider')}

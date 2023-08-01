@@ -1,3 +1,183 @@
+# React Performance
+
+## The Motivation
+I was working on the react UI for tracking a poker game. The screen shows a list of players
+
+![vertical list of players in a poker game](/img/list-of-players.png)
+
+Selecting the name of a player brings up a modal dialog to edit the player
+
+![modal dialog to edit a player](/img/expanded-player.png)
+
+Closing the dialog does not change any values for the player. 
+
+The question I wanted to answer is: why is it that each react component in the list of players rerenders?
+
+## Ways to see if a component renders
+1. use *console.log('...')* statements when rendering
+2. make the screen change (I used timestamps) when rendering
+3. React DevTools profilier
+
+The first two worked but because I could change the code. 
+They would became tedious in a big project and are not an option for code that I cannot change. 
+The third option works very well.
+
+[Introducing the React Profiler](https://legacy.reactjs.org/blog/2018/09/10/introducing-the-react-profiler.html)
+
+That being said the next few sections explain the code and make use of 2. 
+
+## Running this project
+Download this project to you local computers.
+
+Reading the steps below you see that I am using
+* node: 18.12.1
+* npm: 8.19.2
+
+So it is as simple as running
+* _npm install_
+* _npm start_
+
+## Has State
+Clicking on the *Has State* button brings up a screen with the child components timestamped and overlaid by a modal dialog.
+
+![react Has State list of components overlaid by a modal dialog](/img/Has-State-modal.png)
+
+Clicking the *Close* button results it the dialog being dismissed and the parent component (ParentHasState) being rendered.
+Note that the timestamps change on the children components that rerender
+
+![react Has State list of components after dismissing the modal dialog](/img/Has-State-no-modal.png)
+
+Looking at the ParentHasState.js file you will see all the state defined 
+```
+  const [showModel, setShowModel] = useState(true);
+  const [name, setName] = useState('Initial Name');
+
+  const logTime = (from) => console.log('In logTime, from ' + from + ' ' + Date.now());
+
+  // hook to memorize the function
+  const logTime2 = useCallback(
+    (from) => {
+      console.log('In LogTime2, from ' + from + ' ' + Date.now())    },
+    [],
+  );
+```
+pay attention to the comments (React.memo is explained in the next section)
+```
+  return (
+    <>
+      {console.log('rendering ParentHasState')}
+      <h1>Has State</h1>
+      {/* The following have no memo so they always render when this parent renders*/}
+      <Childnopropsnomemo/>
+      <Childnamepropnomemo name={name}/>
+      <Childfunctionpropnomemo logTime={logTime}/>
+      <Childcallbackfunctionpropnomemo logTime2={logTime2}/>
+
+      <br/>
+
+      {/* Memoed child does not rerender when this parent rerenders because
+          there are no props and hence they have not changed */}
+      <Childnopropswithmemo/>
+
+      {/* Memoed child does not rerender when this parent rerenders
+          unless the name prop changed */}
+      <Childnamepropwithmemo name={name}/>
+
+      {/* Does render even though the child is memoed because the reference
+          to the function passed in props is always different  */}
+      <Childfunctionpropwithmemo logTime={logTime}/>
+
+      {/* Memoed child does not render when this parent renders because the
+          reference to the function passed in props is memoed by useCallback */}
+      <Childcallbackfunctionpropwithmemo logTime2={logTime2}/>
+
+      <Mymodal showModel={showModel} setShowModel={setShowModel} setName={setName}/>
+    </>
+  );
+```
+The comments tell all
+1. use [React.memo](https://react.dev/reference/react/memo) for a component and the component only rerenders if the props have change
+2. use the [useCallback](https://legacy.reactjs.org/docs/hooks-reference.html#usecallback) hook to memoize a function
+
+## React.memo
+The [memo](https://react.dev/reference/react/memo) description says 
+
+> lets you skip re-rendering a component when its props are unchanged.
+
+## Has Custom Hook
+Clicking the *Has Custom Hook* button renders the ParentHasCustomHook component. The state is in the useCustomHook.js file
+```
+export default function useCustomHook() {
+  const [showModel, setShowModel] = useState(true);
+  const [name, setName] = useState('Initial Name');
+  const logTime = (from) => console.log('In logTime, from ' + from + ' ' + Date.now());
+  const logTime2 = useCallback(
+    (from) => {
+      console.log('In LogTime2, from ' + from + ' ' + Date.now())    },
+    [],
+  );
+  return {
+    showModel,
+    setShowModel,
+    name,
+    setName,
+    logTime,
+    logTime2
+  }
+}
+```
+and the ParentHasCustomHook.js uses that custom hook
+```
+  const {
+    showModel,
+    setShowModel,
+    name,
+    setName,
+    logTime,
+    logTime2
+  } = useCustomHook();
+```
+The result of using and custom hook is the same as [Has State](https://github.com/gpratte/react-performance/tree/step-04-flesh-out-readme#has-state) section above.
+
+## Is Context Provider
+Clicking the *Is Context Provider* button renders the ParentIsContextProvider component.
+This component is the context provider for the _name_. The code follows. Pay attention to the comments
+```
+  const [showModel, setShowModel] = useState(true);
+  const [name, setName] = useState('Initial Name ' + getTime());
+  return (
+    <ParentContext.Provider value={{name}}>
+      {console.log('rendering ParentIsContextProvider')}
+      <h1>Is Context Provider</h1>
+      {/* No memo so it always render when this parent renders*/}
+      <Childnamefromprovidernomemo/>
+      {/* Will rerender because of the useContext hook even though is uses memo
+          https://legacy.reactjs.org/docs/hooks-reference.html#usecontext */}
+      <Childnamefromproviderwithmemo/>
+      <Mymodal showModel={showModel} setShowModel={setShowModel} setName={setName}/>
+    </ParentContext.Provider>
+  );
+```
+Since the state is in the context and not in props the memo does no good. 
+> When the nearest <MyContext.Provider> above the component updates, this Hook will trigger a rerender with the latest context value passed to that MyContext provider. Even if an ancestor uses React.memo or shouldComponentUpdate, a rerender will still happen starting at the component itself using useContext
+
+Clicking on the *Is Context Provider* button and then dismissing the modal dialog will show that both 
+children rerender.
+
+## React's Recommendation
+The [React memo](https://react.dev/reference/react/memo) page calls out this problem in the [Updating a memoized component using a context section](https://react.dev/reference/react/memo#updating-a-memoized-component-using-a-context)
+
+> Even when a component is memoized, it will still re-render when a context that it’s using changes. Memoization only has to do with props that are passed to the component from its parent.
+
+and in the same section it recommends 
+
+> To make your component re-render only when a part of some context changes, split your component in two. Read what you need from the context in the outer component, and pass it down to a memoized child as a prop.
+
+
+# Steps
+## step 04 flesh out readme
+Fleshed out all of the readme content about these list of steps
+
 ## step 03 render state
 Parent component that either
 * has state
