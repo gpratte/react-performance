@@ -19,6 +19,84 @@ That got quickly became tedious. I then installed the React DevTools to use the 
 
 [Introducing the React Profiler](https://legacy.reactjs.org/blog/2018/09/10/introducing-the-react-profiler.html)
 
+## Running this project
+Download this project to you local computers.
+
+Reading the steps below you see that I am using
+* node: 18.12.1
+* npm: 8.19.2
+
+So it is as simple as running
+* _npm install_
+* _npm start_
+
+## Has State
+Clicking on the *Has State* button brings up a screen with a modal dialog.
+
+![react Has State list of components overlaid by a modal dialog](/img/Has-State-modal.png)
+
+Clicking the *Cancel* button results it the dialog being dismissed and the parent component (ParentHasState) being rendered.
+Note that the timestamps change on the children components that rerender
+
+![react Has State list of components after dismissing the modal dialog](/img/Has-State-no-modal.png)
+
+Looking at the ParentHasState.js file you will see all the state defined 
+```
+  const [showModel, setShowModel] = useState(true);
+  const [name, setName] = useState('Initial Name');
+
+  const logTime = (from) => console.log('In logTime, from ' + from + ' ' + Date.now());
+
+  // hook to memorize the function
+  const logTime2 = useCallback(
+    (from) => {
+      console.log('In LogTime2, from ' + from + ' ' + Date.now())    },
+    [],
+  );
+```
+pay attention to the comments (React.memo is explained in the next section)
+```
+  return (
+    <>
+      {console.log('rendering ParentHasState')}
+      <h1>Has State</h1>
+      {/* The following have no memo so they always render when this parent renders*/}
+      <Childnopropsnomemo/>
+      <Childnamepropnomemo name={name}/>
+      <Childfunctionpropnomemo logTime={logTime}/>
+      <Childcallbackfunctionpropnomemo logTime2={logTime2}/>
+
+      <br/>
+
+      {/* Memoed child does not rerender when this parent rerenders because
+          there are no props and hence they have not changed */}
+      <Childnopropswithmemo/>
+
+      {/* Memoed child does not rerender when this parent rerenders
+          unless the name prop changed */}
+      <Childnamepropwithmemo name={name}/>
+
+      {/* Does render even though the child is memoed because the reference
+          to the function passed in props is always different  */}
+      <Childfunctionpropwithmemo logTime={logTime}/>
+
+      {/* Memoed child does not render when this parent renders because the
+          reference to the function passed in props is memoed by useCallback */}
+      <Childcallbackfunctionpropwithmemo logTime2={logTime2}/>
+
+      <Mymodal showModel={showModel} setShowModel={setShowModel} setName={setName}/>
+    </>
+  );
+```
+The comments tell all
+1. use [React.memo](https://react.dev/reference/react/memo) for a component and the component only rerenders if the props have change
+2. use the [useCallback](https://legacy.reactjs.org/docs/hooks-reference.html#usecallback) hook to memoize a function
+
+## React.memo
+The [memo](https://react.dev/reference/react/memo) description says 
+
+> lets you skip re-rendering a component when its props are unchanged.
+
 # Steps
 ## step 04 flesh out readme
 Fleshed out all of the readme content about these list of steps

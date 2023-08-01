@@ -36,7 +36,7 @@ function ParentHasState() {
       <br/>
 
       {/* Memoed child does not rerender when this parent rerenders because
-          there are no props and hence they have not changed have not changed */}
+          there are no props and hence they have not changed */}
       <Childnopropswithmemo/>
 
       {/* Memoed child does not rerender when this parent rerenders
