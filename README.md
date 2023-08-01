@@ -164,6 +164,16 @@ Since the state is in the context and not in props the memo does no good.
 Clicking on the *Is Context Provider* button and then dismissing the modal dialog will show that both 
 children rerender.
 
+## React's Recommendation
+The [React memo](https://react.dev/reference/react/memo) page calls out this problem in the [Updating a memoized component using a context section](https://react.dev/reference/react/memo#updating-a-memoized-component-using-a-context)
+
+> Even when a component is memoized, it will still re-render when a context that it’s using changes. Memoization only has to do with props that are passed to the component from its parent.
+
+and in the same section it recommends 
+
+> To make your component re-render only when a part of some context changes, split your component in two. Read what you need from the context in the outer component, and pass it down to a memoized child as a prop.
+
+
 # Steps
 ## step 04 flesh out readme
 Fleshed out all of the readme content about these list of steps
